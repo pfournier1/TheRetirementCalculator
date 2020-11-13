@@ -2,7 +2,7 @@
 
 The Retirement Calculator is a simple tool that you can use to find out when you can retire. Find out at what age you can be financially independent and retire early.
 
-Find On The Web: https://www.theretirementcalc.com/
+Find on the web: https://www.theretirementcalc.com/
 
 
 ## Usage
