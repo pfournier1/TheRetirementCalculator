@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="The Retirement Calculator is a simple tool that you can use to find out when you can retire. Find out at what age you can be financially independent and retire early.">
+	<title>The Retirement Calculator</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+
+      function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+          ['Year', 'Total Savings'],
+          {% for key, value in calculationData.items %}
+          	{% if key != "ageToRetireBy" %}
+          	['{{key}}', {{value}}],
+          	{% endif %}
+          {% endfor %}
+        ]);
+
+        var options = {
+          // title: 'Total Savings',
+          legend: "none",
+          titleTextStyle:{
+          	fontSize: 20,
+          	bold: false,
+          },
+          curveType: 'function',
+          hAxis: {
+          	title: 'Your Age',
+          	textStyle:{
+          		fontSize:0
+          	},
+          	titleTextStyle:{
+          		bold: false,
+          },
+          	showTextEvery: 5
+      	  },
+          vAxis: {
+          	gridlines:{
+          		color:"transparent"
+          	},
+          },
+          animation:{
+        	startup: true,
+        	duration: 700,
+        	easing: 'in'
+          },
+          backgroundColor: "transparent",
+          chartArea: {
+          	'backgroundColor': {
+			        'fill': '#E4E4E4',
+			        'opacity': 100
+			 },
+		  },
+		  fontFamily:"futura-pt,\"system-ui\",Helvetica Neue,sans-serif",
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+        chart.draw(data, options);
+    }
+
+    </script>
+
+
+
+
+
+	<style>
+
+		h1,h3,p,ol {
+			margin-left: 50px;
+		}
+
+		.textLabel {
+			grid-column-start: 2;
+			grid-column-end:4;
+		}
+
+		.topnav {
+		  overflow: hidden;
+		  background-color: #FFFFFF;
+		  margin: 0px;
+		}
+
+		.topnav a {
+		  float: left;
+		  color: #54575A;
+		  text-align: center;
+		  padding: 14px;
+		  text-decoration: none;
+		  font-size: 17px;
+		  font-family:  futura-pt,"system-ui",Helvetica Neue,sans-serif;
+		}
+
+		.topnav a:hover {
+		  background-color: #bfbdbb;
+		  color: black;
+		}
+
+		.submit {
+		  background-color: #fab131;
+		  border: none;
+		  color: white;
+		  width: 93px;
+		  height: 40px;
+		}
+		
+		body {
+			background-color: #e6e4e3;
+			margin: 0px;
+			margin-bottom: 75px;
+			font-family:  futura-pt,"system-ui",Helvetica Neue,sans-serif;
+		}
+
+		input {
+		 width: 100px;
+		 height: 20px;
+		}
+
+		.result {
+			margin-left: 50px;
+			font-size: 150px;
+			color:#e6e4e3;
+		}
+		footer{
+			position: fixed;
+			width: 100%;
+			bottom: 0;
+			background-color: white;
+			color: #54575A;
+			text-align: center;
+			height: 40px;
+		}
+		footer > p{		  
+			margin-left: 0px;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			-ms-transform: translate(-50%, -50%);
+			transform: translate(-50%, -50%);
+		}
+		.chartTitle{
+			font-size:20px; 
+			text-align: center;
+			margin-top:-380px;
+			font-family:  futura-pt,"system-ui",Helvetica Neue,sans-serif;
+			height:30px;
+		}
+	</style>
+
+
+</head>
+<body>
+	<!--Navigation Bar-->
+	<div class="topnav">
+	  <a href="/">Home</a>
+	  <a href="/about">About</a>
+	  <a href="/methodology">Methodology</a>
+	</div>
+
+	<h1> You're not going to retire any time soon! </h1>
+
+	<div class=result>
+		{% for key, value in calculationData.items %}
+          	{% if key == "ageToRetireBy" %}
+    	      	&#128542
+          	{% endif %}
+        {% endfor %}
+    	<div style="float:right;">
+    		<div id="curve_chart" style="width: 900px; height: 400px; margin-left: 50px;"></div>
+    		<p class="chartTitle">Total Savings</p>
+    	</div>
+        
+	</div>
+			<form action="" method="POST">
+				{% csrf_token %}
+			<p>
+				<input class="submit" type="submit" value="Recalculate" formaction="/recalculate">
+				<input type="hidden" id="annualIncome" name="annualIncome" 
+				value= "{{calculationData.originalData.annualIncome}}">
+				<input type="hidden" id="yearlyLivingExpenses" name="yearlyLivingExpenses" 
+				value= "{{calculationData.originalData.yearlyLivingExpenses}}">
+				<input type="hidden" id="yearlyLivingExpensesRetirement" name="yearlyLivingExpensesRetirement" 
+				value= "{{calculationData.originalData.yearlyLivingExpensesRetirement}}">
+				<input type="hidden" id="initialSavings" name="initialSavings" 
+				value= "{{calculationData.originalData.initialSavings}}">
+				<input type="hidden" id="incomeGrowth" name="incomeGrowth" 
+				value= "{{calculationData.originalData.incomeGrowth}}">
+				<input type="hidden" id="returnOnInvestment" name="returnOnInvestment" 
+				value= "{{calculationData.originalData.returnOnInvestment}}">
+				<input type="hidden" id="location" name="location" 
+				value= "{{calculationData.originalData.location}}">	
+				<input type="hidden" id="age" name="age" 
+				value= "{{calculationData.originalData.age}}">
+			</p>
+		</form>
+	<footer>
+		<p>Copyright &copy; 2020 TheRetirementCalc.com</p>
+	</footer>
+</body>
+</html>

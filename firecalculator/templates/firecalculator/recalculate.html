@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="The Retirement Calculator is a simple tool that you can use to find out when you can retire. Find out at what age you can be financially independent and retire early.">
+	<title>The Retirement Calculator</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="styles.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	
+	<style>
+		select {
+			font-size:15px;
+		}
+
+		h1 {
+			margin-left: 50px;
+		}
+		.topnav {
+		  overflow: hidden;
+		  background-color: #FFFFFF;
+		  margin: 0px;
+		}
+		.topnav a {
+		  float: left;
+		  color: #54575A;
+		  text-align: center;
+		  padding: 14px;
+		  text-decoration: none;
+		  font-size: 17px;
+		  font-family:  futura-pt,"system-ui",Helvetica Neue,sans-serif;
+		}
+
+		.topnav a:hover {
+		  background-color: #bfbdbb;
+		  color: black;
+		}
+
+		.submit {
+		  background-color: #fab131;
+		  border: none;
+		  color: white;
+		  width: 93px;
+		 height: 40px;
+		 margin-top: 10px
+		}
+		
+		body {
+			background-color: #e6e4e3;
+			margin: 0px;
+			margin-bottom: 75px;
+			font-family:  futura-pt,"system-ui",Helvetica Neue,sans-serif;
+		}
+
+		input {
+		 width: 100px;
+		 height: 40px;
+		 font-size: 15px;
+		}
+
+		.container{
+			margin-left: 50px;
+		}
+		.container > form{
+			font-size: 20px;
+		}
+		.container > form > div{
+			margin-bottom: 10px;
+		}
+
+		footer{
+			position: fixed;
+			width: 100%;
+			bottom: 0;
+			background-color: white;
+			color: #54575A;
+			text-align: center;
+			height: 40px;
+			margin-left: -65px;
+		}
+		footer > p{		  
+			margin-left: 0px;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			-ms-transform: translate(-50%, -50%);
+			transform: translate(-50%, -50%);
+		}
+
+	</style>
+</head>
+<body>
+	<!--Navigation Bar-->
+	<div class="topnav">
+	  <a href="/">Home</a>
+	  <a href="/about">About</a>
+	  <a href="/methodology">Methodology</a>
+	</div>
+
+	<h1> When Can I Retire By? </h1>
+	<div class="container">
+		<form name="dataForm" action="/result" method="POST">
+				{% csrf_token %}
+			<div>
+				Annual income<br>
+				<input type="text" name="annualIncome" id="currency-field" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" value="{{originalData.annualIncome}}" data-type="currency" placeholder="$0" data-toggle="tooltip" data-placement="right" title="Before taxes">
+			</div>
+			<div>
+				Living expenses per year<br>
+				<input type="text" name="yearlyLivingExpenses" id="currency-field" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" value="{{originalData.yearlyLivingExpenses}}" data-type="currency" placeholder="$0" data-toggle="tooltip" data-placement="right" title="The average amount you'll spend every year before retirement. Includes all expenses (ex: housing, food, clothes, vacation, etc.). Inflation is considered do not add inflation to this input ">
+				
+			</div>
+			<div>
+				How much you'll need in retirement per year<br>
+				<input type="text" name="yearlyLivingExpensesRetirement" id="currency-field" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" value="{{originalData.yearlyLivingExpensesRetirement}}" data-type="currency" placeholder="$0" data-toggle="tooltip" data-placement="right" title="The average amount you'll want to spend every year during retirement. Inflation is considered do not add inflation to this input">
+			</div>
+			<div>
+				How much money you've saved<br>
+				<input type="text" name="savings" id="currency-field" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" value="{{originalData.initialSavings}}" data-type="currency" placeholder="$0" data-toggle="tooltip" data-placement="right" title="Include all chequings, savings and investment accounts">
+			</div>
+			<div>
+				Income growth per year<br>
+				<input type="number"id="quantity" name="incomeGrowth" min="0.0" max="20.0" step="0.1" placeholder="0.0" value="{{originalData.incomeGrowth}}" data-toggle="tooltip" data-placement="right" title="Inflation-adjusted. This indicates how much faster your income will grow compared to inflation. For a normal person, yearly income growth is 1% greater than inflation. Depending on your profession, this value could be much higher" >%
+
+			</div>
+			<div>
+				Return on investment per year<br>
+				 <input type="number"id="quantity" name="returnOnInvestment" min="0.0" max="20.0" step="0.1" placeholder="0.0" value="{{originalData.returnOnInvestment}}" data-toggle="tooltip" data-placement="right" title="Inflation-adjusted. Yearly return on investment adjusted for inflation. The average annual inflation-adjusted return of the S&P500 is around 7%">%
+			</div>
+			<div>
+				Age<br>
+				<input type="number"id="quantity" name="age" min="0" max="90" step="1" placeholder="20" value="{{originalData.age}}" data-toggle="tooltip" data-placement="right" title="Your age in years">
+			</div>
+			<div>
+				Select your province<br>
+				<select name="location" id="location" data-toggle="tooltip" data-placement="right" title="The calculations will change based on your location due to differences in income taxes" style="height:40px" selected="British Columbia">
+					{% if originalData.location == "Alberta" %}
+						<option value="Alberta" selected>Alberta</option>
+					    <option value="British Columbia" >British Columbia</option>
+					    <option value="Manitoba">Manitoba</option>
+					    <option value="New Brunswick">New Brunswick</option>
+					    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+					    <option value="Northwest Territories">Northwest Territories</option>
+					    <option value="Nova Scotia">Nova Scotia</option>
+					    <option value="Nunavut">Nunavut</option>
+					    <option value="Ontario">Ontario</option>
+					    <option value="Prince Edward Island">Prince Edward Island</option>
+					    <option value="Quebec">Quebec</option>
+					    <option value="Saskatchewan">Saskatchewan</option>
+					    <option value="Yukon">Yukon</option>
+				    {% elif originalData.location == "British Columbia" %}
+				    	<option value="Alberta">Alberta</option>
+					    <option value="British Columbia" selected>British Columbia</option>
+					    <option value="Manitoba">Manitoba</option>
+					    <option value="New Brunswick">New Brunswick</option>
+					    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+					    <option value="Northwest Territories">Northwest Territories</option>
+					    <option value="Nova Scotia">Nova Scotia</option>
+					    <option value="Nunavut">Nunavut</option>
+					    <option value="Ontario">Ontario</option>
+					    <option value="Prince Edward Island">Prince Edward Island</option>
+					    <option value="Quebec">Quebec</option>
+					    <option value="Saskatchewan">Saskatchewan</option>
+					    <option value="Yukon">Yukon</option>
+					{% elif originalData.location == "Manitoba" %}
+				    	<option value="Alberta">Alberta</option>
+					    <option value="British Columbia" >British Columbia</option>
+					    <option value="Manitoba" selected>Manitoba</option>
+					    <option value="New Brunswick">New Brunswick</option>
+					    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+					    <option value="Northwest Territories">Northwest Territories</option>
+					    <option value="Nova Scotia">Nova Scotia</option>
+					    <option value="Nunavut">Nunavut</option>
+					    <option value="Ontario">Ontario</option>
+					    <option value="Prince Edward Island">Prince Edward Island</option>
+					    <option value="Quebec">Quebec</option>
+					    <option value="Saskatchewan">Saskatchewan</option>
+					    <option value="Yukon">Yukon</option>
+					 {% elif originalData.location == "New Brunswick" %}
+				    	<option value="Alberta">Alberta</option>
+					    <option value="British Columbia" >British Columbia</option>
+					    <option value="Manitoba">Manitoba</option>
+					    <option value="New Brunswick" selected>New Brunswick</option>
+					    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+					    <option value="Northwest Territories">Northwest Territories</option>
+					    <option value="Nova Scotia">Nova Scotia</option>
+					    <option value="Nunavut">Nunavut</option>
+					    <option value="Ontario">Ontario</option>
+					    <option value="Prince Edward Island">Prince Edward Island</option>
+					    <option value="Quebec">Quebec</option>
+					    <option value="Saskatchewan">Saskatchewan</option>
+					    <option value="Yukon">Yukon</option>
+					{% elif originalData.location == "Newfoundland and Labrador" %}
+				    	<option value="Alberta">Alberta</option>
+					    <option value="British Columbia" >British Columbia</option>
+					    <option value="Manitoba">Manitoba</option>
+					    <option value="New Brunswick">New Brunswick</option>
+					    <option value="Newfoundland and Labrador" selected>Newfoundland and Labrador</option>
+					    <option value="Northwest Territories">Northwest Territories</option>
+					    <option value="Nova Scotia">Nova Scotia</option>
+					    <option value="Nunavut">Nunavut</option>
+					    <option value="Ontario">Ontario</option>
+					    <option value="Prince Edward Island">Prince Edward Island</option>
+					    <option value="Quebec">Quebec</option>
+					    <option value="Saskatchewan">Saskatchewan</option>
+					    <option value="Yukon">Yukon</option>
+					 {% elif originalData.location == "Northwest Territories" %}
+				    	<option value="Alberta">Alberta</option>
+					    <option value="British Columbia" >British Columbia</option>
+					    <option value="Manitoba">Manitoba</option>
+					    <option value="New Brunswick">New Brunswick</option>
+					    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+					    <option value="Northwest Territories" selected>Northwest Territories</option>
+					    <option value="Nova Scotia">Nova Scotia</option>
+					    <option value="Nunavut">Nunavut</option>
+					    <option value="Ontario">Ontario</option>
+					    <option value="Prince Edward Island">Prince Edward Island</option>
+					    <option value="Quebec">Quebec</option>
+					    <option value="Saskatchewan">Saskatchewan</option>
+					    <option value="Yukon">Yukon</option>
+					{% elif originalData.location == "Nova Scotia" %}
+				    	<option value="Alberta">Alberta</option>
+					    <option value="British Columbia" >British Columbia</option>
+					    <option value="Manitoba">Manitoba</option>
+					    <option value="New Brunswick">New Brunswick</option>
+					    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+					    <option value="Northwest Territories">Northwest Territories</option>
+					    <option value="Nova Scotia" selected>Nova Scotia</option>
+					    <option value="Nunavut">Nunavut</option>
+					    <option value="Ontario">Ontario</option>
+					    <option value="Prince Edward Island">Prince Edward Island</option>
+					    <option value="Quebec">Quebec</option>
+					    <option value="Saskatchewan">Saskatchewan</option>
+					    <option value="Yukon">Yukon</option>
+					{% elif originalData.location == "Nunavut" %}
+				    	<option value="Alberta">Alberta</option>
+					    <option value="British Columbia" >British Columbia</option>
+					    <option value="Manitoba">Manitoba</option>
+					    <option value="New Brunswick">New Brunswick</option>
+					    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+					    <option value="Northwest Territories">Northwest Territories</option>
+					    <option value="Nova Scotia">Nova Scotia</option>
+					    <option value="Nunavut" selected>Nunavut</option>
+					    <option value="Ontario">Ontario</option>
+					    <option value="Prince Edward Island">Prince Edward Island</option>
+					    <option value="Quebec">Quebec</option>
+					    <option value="Saskatchewan">Saskatchewan</option>
+					    <option value="Yukon">Yukon</option>
+					 {% elif originalData.location == "Ontario" %}
+				    	<option value="Alberta">Alberta</option>
+					    <option value="British Columbia" >British Columbia</option>
+					    <option value="Manitoba">Manitoba</option>
+					    <option value="New Brunswick">New Brunswick</option>
+					    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+					    <option value="Northwest Territories">Northwest Territories</option>
+					    <option value="Nova Scotia">Nova Scotia</option>
+					    <option value="Nunavut">Nunavut</option>
+					    <option value="Ontario" selected>Ontario</option>
+					    <option value="Prince Edward Island">Prince Edward Island</option>
+					    <option value="Quebec">Quebec</option>
+					    <option value="Saskatchewan">Saskatchewan</option>
+					    <option value="Yukon">Yukon</option>
+					{% elif originalData.location == "Prince Edward Island" %}
+				    	<option value="Alberta">Alberta</option>
+					    <option value="British Columbia" >British Columbia</option>
+					    <option value="Manitoba">Manitoba</option>
+					    <option value="New Brunswick">New Brunswick</option>
+					    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+					    <option value="Northwest Territories">Northwest Territories</option>
+					    <option value="Nova Scotia">Nova Scotia</option>
+					    <option value="Nunavut">Nunavut</option>
+					    <option value="Ontario">Ontario</option>
+					    <option value="Prince Edward Island" selected>Prince Edward Island</option>
+					    <option value="Quebec">Quebec</option>
+					    <option value="Saskatchewan">Saskatchewan</option>
+					    <option value="Yukon">Yukon</option>
+					{% elif originalData.location == "Quebec" %}
+				    	<option value="Alberta">Alberta</option>
+					    <option value="British Columbia" >British Columbia</option>
+					    <option value="Manitoba">Manitoba</option>
+					    <option value="New Brunswick">New Brunswick</option>
+					    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+					    <option value="Northwest Territories">Northwest Territories</option>
+					    <option value="Nova Scotia" >Nova Scotia</option>
+					    <option value="Nunavut">Nunavut</option>
+					    <option value="Ontario">Ontario</option>
+					    <option value="Prince Edward Island">Prince Edward Island</option>
+					    <option value="Quebec" selected>Quebec</option>
+					    <option value="Saskatchewan">Saskatchewan</option>
+					    <option value="Yukon">Yukon</option>
+					{% elif originalData.location == "Saskatchewan" %}
+				    	<option value="Alberta">Alberta</option>
+					    <option value="British Columbia" >British Columbia</option>
+					    <option value="Manitoba">Manitoba</option>
+					    <option value="New Brunswick">New Brunswick</option>
+					    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+					    <option value="Northwest Territories">Northwest Territories</option>
+					    <option value="Nova Scotia">Nova Scotia</option>
+					    <option value="Nunavut">Nunavut</option>
+					    <option value="Ontario">Ontario</option>
+					    <option value="Prince Edward Island">Prince Edward Island</option>
+					    <option value="Quebec">Quebec</option>
+					    <option value="Saskatchewan" selected>Saskatchewan</option>
+					    <option value="Yukon">Yukon</option>
+					 {% elif originalData.location == "Yukon" %}
+				    	<option value="Alberta">Alberta</option>
+					    <option value="British Columbia" >British Columbia</option>
+					    <option value="Manitoba">Manitoba</option>
+					    <option value="New Brunswick">New Brunswick</option>
+					    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+					    <option value="Northwest Territories">Northwest Territories</option>
+					    <option value="Nova Scotia">Nova Scotia</option>
+					    <option value="Nunavut">Nunavut</option>
+					    <option value="Ontario">Ontario</option>
+					    <option value="Prince Edward Island">Prince Edward Island</option>
+					    <option value="Quebec">Quebec</option>
+					    <option value="Saskatchewan">Saskatchewan</option>
+					    <option value="Yukon" selected>Yukon</option>
+					{% endif %}
+
+				</select>
+			</div>
+			<p>
+				<input class="submit" type="submit" value="Calculate" onclick="return validateForm()">
+				<input class="submit" type="submit" value="Reset" formaction="/">
+			</p>
+		</form>
+	<!--JQuery Script that allows for the functionality of the currency input boxes-->
+	<script>
+
+		// Jquery Dependency
+		$("input[data-type='currency']").on({
+		    keyup: function() {
+		      formatCurrency($(this));
+		    },
+		});
+
+		function formatNumber(n) {
+		  // format number 1000000 to 1,234,567
+		  return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+		}
+		function formatCurrency(input, blur) {
+		  // appends $ to value, validates decimal side
+		  // and puts cursor back in right position.
+		  
+		  // get input value
+		  var input_val = input.val();
+		  
+		  // don't validate empty input
+		  if (input_val === "") { return; }
+		  
+		  // original length
+		  var original_len = input_val.length;
+
+		  // initial caret position 
+		  var caret_pos = input.prop("selectionStart");
+		    
+		  // check for decimal
+		  if (input_val.indexOf(".") >= 0) {
+
+		    // get position of first decimal
+		    // this prevents multiple decimals from
+		    // being entered
+		    var decimal_pos = input_val.indexOf(".");
+
+		    // split number by decimal point
+		    var left_side = input_val.substring(0, decimal_pos);
+		    var right_side = input_val.substring(decimal_pos);
+
+		    // add commas to left side of number
+		    left_side = formatNumber(left_side);
+
+		    // validate right side
+		    right_side = formatNumber(right_side);
+		    
+		    // On blur make sure 2 numbers after decimal
+		    if (blur === "blur") {
+		      right_side += "00";
+		    }
+		    
+		    // Limit decimal to only 2 digits
+		    right_side = right_side.substring(0, 2);
+
+		    // join number by .
+		    input_val = "$" + left_side + "." + right_side;
+
+
+		  } else {
+		    // no decimal entered
+		    // add commas to number
+		    // remove all non-digits
+		    input_val = formatNumber(input_val);
+		    input_val = "$" + input_val;
+		    
+		    // final formatting
+		    if (blur === "blur") {
+		      input_val += ".00";
+		    }
+		  }
+		  
+		  // send updated string to input
+		  input.val(input_val);
+
+		  // put caret back in the right position
+		  var updated_len = input_val.length;
+		  caret_pos = updated_len - original_len + caret_pos;
+		  input[0].setSelectionRange(caret_pos, caret_pos);
+		}
+	</script>
+
+	<script>
+	$(document).ready(function(){
+	  $('[data-toggle="tooltip"]').tooltip();   
+	});
+	</script>
+	<script>
+	$(document).ready(function(){
+	  $('[data-toggle="tooltip"]').tooltip();   
+	});
+	</script>
+
+	<script>
+		function validateForm(){
+			var flag = true;
+			var annualIncome = document.forms["dataForm"]["annualIncome"].value;
+			if(annualIncome==""){
+				document.forms["dataForm"]["annualIncome"].style.borderColor = "red";
+				flag = false;
+			}
+			var yearlyLivingExpenses = document.forms["dataForm"]["yearlyLivingExpenses"].value;
+			if(yearlyLivingExpenses==""){
+				document.forms["dataForm"]["yearlyLivingExpenses"].style.borderColor = "red";
+				flag = false;
+			}
+			var yearlyLivingExpensesRetirement = document.forms["dataForm"]["yearlyLivingExpensesRetirement"].value;
+			if(yearlyLivingExpensesRetirement==""){
+				document.forms["dataForm"]["yearlyLivingExpensesRetirement"].style.borderColor = "red";
+				flag = false;
+			}
+			var savings = document.forms["dataForm"]["savings"].value;
+			if(savings==""){
+				document.forms["dataForm"]["savings"].style.borderColor = "red";
+				flag = false;
+			}
+			var incomeGrowth = document.forms["dataForm"]["incomeGrowth"].value;
+			if(incomeGrowth==""){
+				document.forms["dataForm"]["incomeGrowth"].style.borderColor = "red";
+				flag = false;
+			}
+			var returnOnInvestment = document.forms["dataForm"]["returnOnInvestment"].value;
+			if(returnOnInvestment==""){
+				document.forms["dataForm"]["returnOnInvestment"].style.borderColor = "red";
+				flag = false;
+			}
+			var age = document.forms["dataForm"]["age"].value;
+			if(age==""){
+				document.forms["dataForm"]["age"].style.borderColor = "red";
+				flag = false;
+			}
+			if(!flag){
+				alert("Please Fill Out All The Fields");
+
+			}
+			return flag
+		}
+	</script>
+
+	<footer>
+		<p>Copyright &copy; 2020 TheRetirementCalc.com<p>
+	</footer>
+
+
+</body>
+</html>

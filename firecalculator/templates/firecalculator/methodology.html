@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="The Retirement Calculator is a simple tool that you can use to find out when you can retire. Find out at what age you can be financially independent and retire early.">
+	<title>The Retirement Calculator</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<style>
+
+		h1 {
+			margin-left: 50px;
+		}
+
+		.textLabel {
+			grid-column-start: 2;
+			grid-column-end:4;
+		}
+
+		.topnav {
+		  overflow: hidden;
+		  background-color: #FFFFFF;
+		  margin: 0px;
+		}
+
+		.topnav a {
+		  float: left;
+		  color: #54575A;
+		  text-align: center;
+		  padding: 14px;
+		  text-decoration: none;
+		  font-size: 17px;
+		  font-family:  futura-pt,"system-ui",Helvetica Neue,sans-serif;
+		}
+
+		.topnav a:hover {
+		  background-color: #bfbdbb;
+		  color: black;
+		}
+		
+		body {
+			background-color: #e6e4e3;
+			margin: 0px;
+			margin-bottom: 75px;
+			font-family:  futura-pt,"system-ui",Helvetica Neue,sans-serif;
+		}
+
+		input {
+		 width: 100px;
+		 height: 20px;
+		}
+		footer{
+			position: fixed;
+			width: 100%;
+			bottom: 0;
+			background-color: white;
+			color: #54575A;
+			text-align: center;
+			height: 40px;
+		}
+		footer > p{		
+			margin-left: 0px;  
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			-ms-transform: translate(-50%, -50%);
+			transform: translate(-50%, -50%);
+		}
+
+		.text{
+			padding: 10px;
+			font-size:18px;
+			background-color: white;
+			max-width: 700px;
+			margin-left:50px;
+			margin-right:50px;
+		}
+
+
+	</style>
+
+
+</head>
+<body>
+	<!--Navigation Bar-->
+	<div class="topnav">
+	  <a href="/">Home</a>
+	  <a href="/about">About</a>
+	  <a href="/methodology">Methodology</a>
+	</div>
+
+	<h1> Methodology</h1>
+	<p>
+		<div class="text">
+			<h3> Basic Assumptions </h3>
+			<ol>
+		  		<li> No matter how much your income increases, you'll still spend the same each year to maximize your savings. Example: If you're living on $30k and your income increases, you'll still live on $30k and add the extra money to your savings</li>
+		  		<li>When you retire, you'll live off of the dividends from your savings portfolio</li>
+			</ol> 
+			<h3> Technical Assumptions </h3>
+			<ol>
+		  		<li> Income taxes</li>
+		  		<ol type="a">
+		  			<li> Included in calculations: <br/>
+		                - 2020 marginal tax brackets applicable to each province and include EI/CPP premiums <br/>
+		                - Basic Personal Amount tax credit applicable to each province</li>
+		            <li> Excluded in calculations: <br/>
+		                - Other tax deductions or credits that may be applied to your specific situation (ex: Canada Child Benefit, RRSP coontributions, etc.)</li>
+		  		</ol>
+		  		<li>Income growth</li>
+		  		  	<ol type="a">
+		  		  		<li> This input is based on income growth exceeding inflation. In other words, the increase in purchasing power of your income</li>
+		  		  		<li> The average inflation-adjusted yearly income growth in Canada is approximately 1%</li>
+		  		  		<li> Example: If your inflation-adjusted income growth is 0% then your income will increase at the same rate of inflation and your purchasing power will be unaffected. If your inflation-adjusted income growth is 2% then your income will increase at 2% more than the rate of inflation</li>
+		  		  	</ol>
+		  		 <li>Investment return</li>
+		  		   	<ol type="a">
+		  		  		<li> Assumes that all your savings are invested in a diversified pool of assets and that any dividends received are reinvested</li>
+		  		  		<li> This input reflects the inflation-adjusted average yearly return on the overall market</li>
+		  		  		<li> For reference the average inflation-adjusted return on the S&P 500 is about 7%</li>
+		  		  	</ol>
+	  		  	<li>Retirement</li>
+	  		   	<ol type="a">
+	  		  		<li> Assumes that all your savings are sold at retirement and are reinvested into a high divided portfolio</li>
+	  		  		<li> Capital Gains tax of 50% is included in this transaction</li>
+	  		  		<li> Assumes a conservative 3% after-tax dividend yield on the portfolio</li>
+	  		  	</ol>
+		  		</ol>
+			</ol> 
+		</div>
+	</p>
+	<footer>
+		<p>Copyright &copy; 2020 TheRetirementCalc.com<p>
+	</footer>
+</body>
+</html>
