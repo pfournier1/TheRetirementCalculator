@@ -1,29 +1,17 @@
-# Foobar
+# The Retirement Calculator
 
-Foobar is a Python library for dealing with word pluralization.
+The Retirement Calculator is a simple tool that you can use to find out when you can retire. Find out at what age you can be financially independent and retire early.
 
-## Installation
+Find On The Web: https://www.theretirementcalc.com/
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
-
-```bash
-pip install foobar
-```
 
 ## Usage
 
 ```python
-import foobar
-
-foobar.pluralize('word') # returns 'words'
-foobar.pluralize('goose') # returns 'geese'
-foobar.singularize('phenomena') # returns 'phenomenon'
+source env/bin/activate
+python manage.py runserver 
 ```
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+The Django Web Application will be running at http://127.0.0.1:8000/
 
-Please make sure to update tests as appropriate.
 
-## License
-[MIT](https://choosealicense.com/licenses/mit/)
